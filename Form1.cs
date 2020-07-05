@@ -17,7 +17,6 @@ namespace GetDbmData
         private readonly char csvSeparatorSemiColon = ';';
         private static readonly string pathSeparator = "\\";
         public static readonly string defaultFile = Directory.GetCurrentDirectory() + pathSeparator + "csv_files";
-        private readonly string filepathComma = defaultFile + pathSeparator + "dbmValuesComma.csv";
         private readonly string filepathSemiColon = defaultFile + pathSeparator + "dbmValuesSemiColon.csv";
 
         public ChromiumWebBrowser ChromeBrowser { get; set; }
@@ -95,7 +94,8 @@ namespace GetDbmData
                     {
                         var response = t.Result;
                         EvaluateJavaScriptResult = response.Success ? (response.Result != null ? response.Result.ToString() : "null") : response.Message;
-                        dbmValue = EvaluateJavaScriptResult.Split(';').Length > 1 ? EvaluateJavaScriptResult.Split(';')[1] : EvaluateJavaScriptResult;
+                        var splittedResult = EvaluateJavaScriptResult.Split(';');
+                        dbmPeak = splittedResult.Length > 1 ? splittedResult[splittedResult.Length-1] : EvaluateJavaScriptResult;
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -106,7 +106,8 @@ namespace GetDbmData
                     {
                         var response = t.Result;
                         EvaluateJavaScriptResult = response.Success ? (response.Result != null ? response.Result.ToString() : "null") : response.Message;
-                        dbmPeak = EvaluateJavaScriptResult.Split(';').Length > 1 ? EvaluateJavaScriptResult.Split(';')[1] : EvaluateJavaScriptResult;
+                        var splittedResult = EvaluateJavaScriptResult.Split(';');
+                        dbmPeak = splittedResult.Length > 1 ? splittedResult[splittedResult.Length-1] : EvaluateJavaScriptResult;
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -126,10 +127,6 @@ namespace GetDbmData
                 {
                     try
                     {
-                        using (StreamWriter writer = new StreamWriter(new FileStream(filepathComma, FileMode.Append)))
-                        {
-                            writer.WriteLine(frequency + csvSeparatorComma + dbmValue + csvSeparatorComma + dbmPeak);
-                        }
                         using (StreamWriter writer = new StreamWriter(new FileStream(filepathSemiColon, FileMode.Append)))
                         {
                             writer.WriteLine(frequency + csvSeparatorSemiColon + dbmValue + csvSeparatorSemiColon + dbmPeak);
