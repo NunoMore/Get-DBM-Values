@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CefSharp;
@@ -10,16 +9,15 @@ namespace GetDbmData
 {
     public partial class Form1 : Form
     {
+        public ChromiumWebBrowser chromeBrowser;
         private bool IsStarted = false;
-        private readonly int logFrequency = 1 * 1000; // 1s by default
+        private int logFrequency = 1 * 1000; // 1s by default
+        private Uri uri = new Uri("http://websdr.ewi.utwente.nl:8901/"); // utwente university url by default
         
-        private readonly char csvSeparatorComma = ',';
-        private readonly char csvSeparatorSemiColon = ';';
         private static readonly string pathSeparator = "\\";
-        public static readonly string defaultFile = Directory.GetCurrentDirectory() + pathSeparator + "csv_files";
-        private readonly string filepathSemiColon = defaultFile + pathSeparator + "dbmValuesSemiColon.csv";
-
-        public ChromiumWebBrowser ChromeBrowser { get; set; }
+        private static readonly string dateFormat = "dd-MM-yyy";
+        private static readonly char csvSeparatorSemiColon = ';';
+        public static readonly string defaultFolderPath = Directory.GetCurrentDirectory() + pathSeparator + "csv_files" + DateTime.Today.ToString(dateFormat);
 
         public Form1()
         {
@@ -41,17 +39,39 @@ namespace GetDbmData
             Cef.Initialize(settings);
             
             // Create a browser component
-            ChromeBrowser = new ChromiumWebBrowser("http://websdr.ewi.utwente.nl:8901/");
+            chromeBrowser = new ChromiumWebBrowser(uri.ToString());
 
             // Add it to the form and fill it to the form window.
-            this.Controls.Add(ChromeBrowser);
-            ChromeBrowser.Dock = DockStyle.Fill;
-            Directory.CreateDirectory(defaultFile);
+            this.Controls.Add(chromeBrowser);
+            chromeBrowser.Dock = DockStyle.Fill;
+            try
+            {
+                // create folder if not exists
+                Directory.CreateDirectory(defaultFolderPath);
+            }
+            catch (Exception e)
+            {
+                ErrorHandle($"[Error creating folder] - {e.Message}");
+            }
+
+            try
+            {
+                // set time lapse log frequency value to display
+                textBox1.Text = logFrequency.ToString();
+
+                // set url value to display
+                textBox2.Text = uri.ToString();
+            }
+            catch (Exception e)
+            {
+                ErrorHandle($"[Error initializing values] - {e.Message}");
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Cef.Shutdown();
+            chromeBrowser.Dispose();
         }
 
         // START BUTTON
@@ -79,7 +99,7 @@ namespace GetDbmData
                 await Task.Delay(logFrequency);
                 radioButton1.Checked = !radioButton1.Checked;
 
-                var frame = ChromeBrowser.GetMainFrame();
+                var frame = chromeBrowser.GetMainFrame();
                 var task_dbmValue = frame.EvaluateScriptAsync("document.getElementById('numericalsmeter').innerHTML;", null);
                 string dbmValue = "no value";
                 var task_dbmPeak = frame.EvaluateScriptAsync("document.getElementById('numericalsmeterpeak').innerHTML;", null);
@@ -127,19 +147,64 @@ namespace GetDbmData
                 {
                     try
                     {
-                        using (StreamWriter writer = new StreamWriter(new FileStream(filepathSemiColon, FileMode.Append)))
+                        File.Create(GetFilePath());
+                        using (StreamWriter writer = new StreamWriter(new FileStream(GetFilePath(), FileMode.Append)))
                         {
-                            writer.WriteLine(frequency + csvSeparatorSemiColon + dbmValue + csvSeparatorSemiColon + dbmPeak);
+                            writer.WriteLine(DateTime.Now.ToString(dateFormat + " hh:mm:ss,fff") + csvSeparatorSemiColon + frequency + csvSeparatorSemiColon + dbmValue + csvSeparatorSemiColon + dbmPeak);
                         }
                     }
                     catch (Exception e)
                     {
-                        MessageBox.Show($"[Error] - {e.Message}");
-                        IsStarted = false;
+                        ErrorHandle($"[Error writing to file] - {e.Message}");
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
             }
             radioButton1.Checked = false;
+        }
+
+        // change log frequency
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            var tb = (TextBox)sender;
+            if (!int.TryParse(tb.Text, out logFrequency))
+            {
+                ErrorHandle("Time lapse must be a number");
+            }
+            File.Create(GetFilePath());
+        }
+
+        // change url
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            var tb = (TextBox)sender;
+            if(!Uri.TryCreate(tb.Text, UriKind.RelativeOrAbsolute, out uri)) // getvalue from text input
+            {
+                ErrorHandle("Url format not recognized");
+            }
+            File.Create(GetFilePath());
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                chromeBrowser.Load(uri.ToString());
+            }
+            catch (Exception exception)
+            {
+                ErrorHandle($"[Error Loading Url] - {exception.Message}");
+            }
+        }
+
+        private string GetFilePath()
+        {
+            return $"{defaultFolderPath}{pathSeparator}{uri.Host}_{DateTime.Today.ToString(dateFormat)}.csv";
+        }
+
+        private void ErrorHandle(string message)
+        {
+            MessageBox.Show(message);
+            IsStarted = false;
         }
     }
 }
