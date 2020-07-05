@@ -10,17 +10,18 @@ namespace GetDbmData
 {
     public partial class Form1 : Form
     {
-        public ChromiumWebBrowser chromeBrowser;
-        
         private bool IsStarted = false;
         private readonly int logFrequency = 1 * 1000; // 1s by default
         
         private readonly char csvSeparatorComma = ',';
         private readonly char csvSeparatorSemiColon = ';';
-        public static readonly string defaultFile = Directory.GetCurrentDirectory() + "\\csv_files";
-        private readonly string filepathComma = defaultFile + "\\dbmValuesComma.csv";
-        private readonly string filepathSemiColon = defaultFile + "\\dbmValuesSemiColon.csv";
-        
+        private static readonly string pathSeparator = "\\";
+        public static readonly string defaultFile = Directory.GetCurrentDirectory() + pathSeparator + "csv_files";
+        private readonly string filepathComma = defaultFile + pathSeparator + "dbmValuesComma.csv";
+        private readonly string filepathSemiColon = defaultFile + pathSeparator + "dbmValuesSemiColon.csv";
+
+        public ChromiumWebBrowser ChromeBrowser { get; set; }
+
         public Form1()
         {
             InitializeComponent();
@@ -41,11 +42,11 @@ namespace GetDbmData
             Cef.Initialize(settings);
             
             // Create a browser component
-            chromeBrowser = new ChromiumWebBrowser("http://websdr.ewi.utwente.nl:8901/");
+            ChromeBrowser = new ChromiumWebBrowser("http://websdr.ewi.utwente.nl:8901/");
 
             // Add it to the form and fill it to the form window.
-            this.Controls.Add(chromeBrowser);
-            chromeBrowser.Dock = DockStyle.Fill;
+            this.Controls.Add(ChromeBrowser);
+            ChromeBrowser.Dock = DockStyle.Fill;
             Directory.CreateDirectory(defaultFile);
         }
 
@@ -79,7 +80,7 @@ namespace GetDbmData
                 await Task.Delay(logFrequency);
                 radioButton1.Checked = !radioButton1.Checked;
 
-                var frame = chromeBrowser.GetMainFrame();
+                var frame = ChromeBrowser.GetMainFrame();
                 var task_dbmValue = frame.EvaluateScriptAsync("document.getElementById('numericalsmeter').innerHTML;", null);
                 string dbmValue = "no value";
                 var task_dbmPeak = frame.EvaluateScriptAsync("document.getElementById('numericalsmeterpeak').innerHTML;", null);
