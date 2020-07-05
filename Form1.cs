@@ -17,7 +17,7 @@ namespace GetDbmData
         private static readonly string pathSeparator = "\\";
         private static readonly string dateFormat = "dd-MM-yyy";
         private static readonly char csvSeparatorSemiColon = ';';
-        public static readonly string defaultFolderPath = Directory.GetCurrentDirectory() + pathSeparator + "csv_files" + DateTime.Today.ToString(dateFormat);
+        public static readonly string defaultFolderPath = Directory.GetCurrentDirectory() + pathSeparator + "csv_files" + pathSeparator + DateTime.Today.ToString(dateFormat);
 
         public Form1()
         {
@@ -62,10 +62,7 @@ namespace GetDbmData
                 // set url value to display
                 textBox2.Text = uri.ToString();
             }
-            catch (Exception e)
-            {
-                ErrorHandle($"[Error initializing values] - {e.Message}");
-            }
+            catch { }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -147,10 +144,9 @@ namespace GetDbmData
                 {
                     try
                     {
-                        File.Create(GetFilePath());
                         using (StreamWriter writer = new StreamWriter(new FileStream(GetFilePath(), FileMode.Append)))
                         {
-                            writer.WriteLine(DateTime.Now.ToString(dateFormat + " hh:mm:ss,fff") + csvSeparatorSemiColon + frequency + csvSeparatorSemiColon + dbmValue + csvSeparatorSemiColon + dbmPeak);
+                            writer.WriteLine(DateTime.Now.ToString(dateFormat + " HH:mm:ss.fff") + csvSeparatorSemiColon + frequency + csvSeparatorSemiColon + dbmValue + csvSeparatorSemiColon + dbmPeak);
                         }
                     }
                     catch (Exception e)
@@ -170,7 +166,6 @@ namespace GetDbmData
             {
                 ErrorHandle("Time lapse must be a number");
             }
-            File.Create(GetFilePath());
         }
 
         // change url
@@ -181,7 +176,6 @@ namespace GetDbmData
             {
                 ErrorHandle("Url format not recognized");
             }
-            File.Create(GetFilePath());
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -205,6 +199,7 @@ namespace GetDbmData
         {
             MessageBox.Show(message);
             IsStarted = false;
+            button1.Click += button1_Click; // enable start click
         }
     }
 }

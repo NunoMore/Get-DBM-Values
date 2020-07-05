@@ -32,11 +32,11 @@
             this.button2 = new System.Windows.Forms.Button();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button3 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.button3 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -90,6 +90,16 @@
             this.panel1.Size = new System.Drawing.Size(752, 51);
             this.panel1.TabIndex = 3;
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(359, 7);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(45, 37);
+            this.button3.TabIndex = 7;
+            this.button3.Text = "GO";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -129,16 +139,6 @@
             this.textBox1.Size = new System.Drawing.Size(96, 22);
             this.textBox1.TabIndex = 3;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(359, 21);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(45, 23);
-            this.button3.TabIndex = 7;
-            this.button3.Text = "GO";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // Form1
             // 
