@@ -107,11 +107,11 @@
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(166, 65);
+            this.label2.Location = new System.Drawing.Point(122, 62);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(158, 17);
+            this.label2.Size = new System.Drawing.Size(202, 17);
             this.label2.TabIndex = 6;
-            this.label2.Text = "Time (ms) - min: 100";
+            this.label2.Text = "Time lapse (ms) - min: 100";
             // 
             // label1
             // 
@@ -119,7 +119,7 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.Color.White;
-            this.label1.Location = new System.Drawing.Point(7, 90);
+            this.label1.Location = new System.Drawing.Point(7, 85);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(79, 17);
             this.label1.TabIndex = 5;

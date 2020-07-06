@@ -101,7 +101,6 @@ namespace GetDbmData
             // show button
             button1.Show();
             button3.Show();
-
         }
 
         private async void WriteData()
