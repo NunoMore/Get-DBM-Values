@@ -77,7 +77,10 @@ namespace GetDbmData
         {
             IsStarted = true;
             button1.Click -= button1_Click; // disable start click untill stopped
-            
+            button3.Click -= button3_Click; // disable start click untill stopped
+            button1.Hide();
+            button3.Hide();
+
             // do asynchronously
             WriteData();
         }
@@ -87,6 +90,10 @@ namespace GetDbmData
         {
             IsStarted = false;
             button1.Click += button1_Click; // enable start click
+            button3.Click += button3_Click; // enable start click
+            button1.Show();
+            button3.Show();
+
         }
 
         private async void WriteData()
