@@ -163,6 +163,7 @@ namespace GetDbmData
                 {
                     try
                     {
+                        if (!Directory.Exists(defaultFolderPath)) Directory.CreateDirectory(defaultFolderPath);
                         if (!File.Exists(GetFilePath)) File.Create(GetFilePath);
 
                         var lineCount = File.ReadAllLines(GetFilePath).Length;
