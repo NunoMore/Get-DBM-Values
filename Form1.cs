@@ -13,6 +13,7 @@ namespace GetDbmData
         private bool IsStarted = false;
         private int logFrequency = 1 * 1000; // 1s by default
         private Uri uri = new Uri("http://websdr.ewi.utwente.nl:8901/"); // utwente university url by default
+        private Uri uriTemp;
         
         private static readonly string pathSeparator = "\\";
         private static readonly string dateFormat = "dd-MM-yyy";
@@ -166,22 +167,29 @@ namespace GetDbmData
             {
                 ErrorHandle("Time lapse must be a number");
             }
+
+            if (logFrequency < 100)
+            {
+                tb.Text = "100";
+            }
         }
 
         // change url
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             var tb = (TextBox)sender;
-            if(!Uri.TryCreate(tb.Text, UriKind.RelativeOrAbsolute, out uri)) // getvalue from text input
+            if(!Uri.TryCreate(tb.Text, UriKind.RelativeOrAbsolute, out uriTemp)) // getvalue from text input
             {
                 ErrorHandle("Url format not recognized");
             }
         }
 
+        // load url
         private void button3_Click(object sender, EventArgs e)
         {
             try
             {
+                uri = uriTemp;
                 chromeBrowser.Load(uri.ToString());
             }
             catch (Exception exception)
