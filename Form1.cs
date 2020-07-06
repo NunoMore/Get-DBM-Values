@@ -76,8 +76,12 @@ namespace GetDbmData
         private void button1_Click(object sender, EventArgs e)
         {
             IsStarted = true;
-            button1.Click -= button1_Click; // disable start click untill stopped
-            button3.Click -= button3_Click; // disable start click untill stopped
+            
+            // disable clicks until stopped
+            button1.Click -= button1_Click;
+            button3.Click -= button3_Click;
+
+            // hide button until stopped
             button1.Hide();
             button3.Hide();
 
@@ -89,8 +93,12 @@ namespace GetDbmData
         private void button2_Click(object sender, EventArgs e)
         {
             IsStarted = false;
-            button1.Click += button1_Click; // enable start click
-            button3.Click += button3_Click; // enable start click
+            
+            // enable click
+            button1.Click += button1_Click;
+            button3.Click += button3_Click;
+            
+            // show button
             button1.Show();
             button3.Show();
 
