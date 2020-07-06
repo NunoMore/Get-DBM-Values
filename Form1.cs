@@ -104,7 +104,7 @@ namespace GetDbmData
                 var task_frequency = frame.EvaluateScriptAsync("document.getElementsByName('frequency')[0].value;", null);
                 var frequency = "no value";
 
-                // get dbm peak
+                // get dbm value
                 await task_dbmValue.ContinueWith(t =>
                 {
                     if (!t.IsFaulted)
@@ -112,7 +112,7 @@ namespace GetDbmData
                         var response = t.Result;
                         EvaluateJavaScriptResult = response.Success ? (response.Result != null ? response.Result.ToString() : "null") : response.Message;
                         var splittedResult = EvaluateJavaScriptResult.Split(';');
-                        dbmPeak = splittedResult.Length > 1 ? splittedResult[splittedResult.Length-1] : EvaluateJavaScriptResult;
+                        dbmValue = splittedResult.Length > 1 ? splittedResult[splittedResult.Length-1] : EvaluateJavaScriptResult;
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
 
