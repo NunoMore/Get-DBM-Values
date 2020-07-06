@@ -12,9 +12,13 @@ namespace GetDbmData
         public ChromiumWebBrowser chromeBrowser;
         private bool IsStarted = false;
         private int logFrequency = 1 * 1000; // 1s by default
+        private int versionNumber = 0;
+        private int maxLines = 1000 * 1000;
+
         private Uri uri = new Uri("http://websdr.ewi.utwente.nl:8901/"); // utwente university url by default
         private Uri uriTemp;
         
+        private static readonly string firstLineHeader = "\"DateStamp\";\"TimeStamp\";\"Frequency\";\"dbmValue\";\"dbmPeak\"";
         private static readonly string pathSeparator = "\\";
         private static readonly string dateFormat = "dd-MM-yyy";
         private static readonly char csvSeparatorSemiColon = ';';
@@ -159,10 +163,30 @@ namespace GetDbmData
                 {
                     try
                     {
-                        using (StreamWriter writer = new StreamWriter(new FileStream(GetFilePath(), FileMode.Append)))
+                        if (!File.Exists(GetFilePath)) File.Create(GetFilePath);
+
+                        var lineCount = File.ReadAllLines(GetFilePath).Length;
+
+                        // Increase version number of the file in question.
+                        while (lineCount > maxLines)
                         {
-                            writer.WriteLine(DateTime.Now.ToString(dateFormat + " HH:mm:ss.fff") + csvSeparatorSemiColon + frequency + csvSeparatorSemiColon + dbmValue + csvSeparatorSemiColon + dbmPeak);
+                            versionNumber++;
+                            if (!File.Exists(GetFilePath)) File.Create(GetFilePath);
+                            lineCount = File.ReadAllLines(GetFilePath).Length;
                         }
+
+                        using (StreamWriter writer = new StreamWriter(new FileStream(GetFilePath, FileMode.Append)))
+                        {
+                            if (lineCount == 0)
+                            {
+                                writer.WriteLine(firstLineHeader);
+                            }
+                            var splitDateTime = DateTime.Now.ToString(dateFormat + " HH:mm:ss.fff").Split(' ');
+                            writer.WriteLine($"\"{splitDateTime[0]}\"{csvSeparatorSemiColon}\"{splitDateTime[1]}\"{csvSeparatorSemiColon}{frequency}{csvSeparatorSemiColon}{dbmValue}{csvSeparatorSemiColon}{dbmPeak}");
+                        }
+
+                        // reset version number to 0
+                        versionNumber = 0;
                     }
                     catch (Exception e)
                     {
@@ -184,7 +208,7 @@ namespace GetDbmData
 
             if (logFrequency < 100)
             {
-                tb.Text = "100";
+                logFrequency = 100;
             }
         }
 
@@ -212,16 +236,20 @@ namespace GetDbmData
             }
         }
 
-        private string GetFilePath()
-        {
-            return $"{defaultFolderPath}{pathSeparator}{uri.Host}_{DateTime.Today.ToString(dateFormat)}.csv";
-        }
+        private string GetFilePath => $"{defaultFolderPath}{pathSeparator}{uri.Host}_{DateTime.Today.ToString(dateFormat)}_{versionNumber}.csv";
 
         private void ErrorHandle(string message)
         {
             MessageBox.Show(message);
             IsStarted = false;
-            button1.Click += button1_Click; // enable start click
+
+            // enable click
+            button1.Click += button1_Click;
+            button3.Click += button3_Click;
+
+            // show button
+            button1.Show();
+            button3.Show();
         }
     }
 }
