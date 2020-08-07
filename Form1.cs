@@ -18,7 +18,7 @@ namespace GetDbmData
         private Uri uri = new Uri("http://websdr.ewi.utwente.nl:8901/"); // utwente university url by default
         private Uri uriTemp;
         
-        private static readonly string firstLineHeader = "\"DateStamp\";\"TimeStamp\";\"Frequency\";\"dbmValue\";\"dbmPeak\"";
+        private static readonly string firstLineHeader = "DateStamp;TimeStamp;Frequency;dbmValue;dbmPeak";
         private static readonly string pathSeparator = "\\";
         private static readonly string dateFormat = "dd-MM-yyy";
         private static readonly string csvSeparatorSemiColon = ";";
