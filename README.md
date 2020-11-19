@@ -1,2 +1,1 @@
-"# Get-dbm-values" 
-"# Get-dbm-values" 
+Specific C# aplication to get dbm values of several web sites with the same type of structure. This is for electronics purposes to record daily data about a specific radio frequency being transmited. 
